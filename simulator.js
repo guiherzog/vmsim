@@ -5,4 +5,5 @@ var virtualmemory = require('./simulator/virtualmemory');
 
 console.log(virtualmemory);
 
- document.getElementById("requestsList").innerHTML = virtualmemory;
+
+document.getElementById("requestsList").innerHTML = virtualmemory;
