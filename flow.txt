@@ -1,0 +1,46 @@
+Memória Primaria.
+1- Recebe uma requisição de uma pagina da cpu do processo rodando.
+2- MMU verifica se existe na MP
+	2.1 Se sim, envia. 
+	2.2 Senão, deu page fault.
+	2.3 Tem espaço livre?
+		2.3.1 Se sim:
+			2.3.1.1 Requisita da MV a página solicitada;		
+		2.3.2 Senão
+			2.3.2.2: Escolha uma página usando Clock Algorithm para remover.
+			2.3.2.1 Ela requisita troca dessa pagina c a virtual. (Envia uma pagina não usada para a MV, e recebe a desejada da MV).
+	2.2 Recebe a página tanto da MV, ou do SWAP ou Disco.
+
+Memoria Virtual
+	1. Recebe uma requisição da MP de uma página;
+	2. Ela possui a página requisitada?
+		2.1 Sim:
+			2. Envia para a MP;
+		2.2 Não:
+			2.2.2 Requisita que o Swap envia a página para a MP;
+	4. Recebi uma página para salvar da MP.
+		4.1 Tem espaço? Sim:
+			4.1.1 Salva Página recebida da MP em si mesma.
+		4.2 Não:
+			4.2.1 Escolhe usando o Clock Algorithm, uma página para remover.
+			4.2.2 Ela envia essa pagina pro swap.
+			4.2.3 Salva pagina recebida da MP em si mesma.
+
+Swap
+	1. Recebe um requisição da MV de uma página.
+	2. Tem a pagina?
+		2.1 Se sim, envia para a MP.
+		2.2 Senao, pede ao disco para enviar.
+
+Disco
+	1. Recebe uma requisição de Página.
+	2. Envia para a MP.
+
+Objetos:
+	- Processo;
+	- MP;
+	- MV;
+	- SWAP;
+	- Disco;
+	- Page;
+	- Frame;

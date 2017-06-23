@@ -1,0 +1,21 @@
+{
+  "name": "vmsim",
+  "version": "1.0.0",
+  "description": "A virtual memory simulator using Clock and Swap.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/guiherzog/vmsim",
+  "keywords": [
+    "vmsim",
+    "simulator",
+    "OS",
+    "virtual-memory"
+  ],
+  "author": "Guilherme Herzog & Lucas Carneiro",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "~1.6.2"
+  }
+}
