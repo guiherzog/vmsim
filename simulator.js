@@ -5,10 +5,10 @@ var virtualmemory = require('./simulator/virtualmemory');
 
 // console.log(virtualmemory);
 
-// document.getElementById("navbar-brand").innerHTML = virtualmemory;
 
 const numberPages = 8;
 const numberProcesses = 16;
+document.getElementById("numberProcesses").innerHTML = numberProcesses;
 
 var processList = [];
 for (var i = 0; i < numberProcesses; i++) {
