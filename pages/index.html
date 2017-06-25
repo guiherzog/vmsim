@@ -30,7 +30,7 @@
 							<div class="navbar-header">
 								<ul class="nav navbar-nav navbar-right">
 									<li>
-										<a href="#pablo" class="dropdown-toggle" data-toggle="dropdown">
+										<a id="playButton" href="#pablo" class="dropdown-toggle" data-toggle="dropdown">
 											<i class="material-icons">play_arrow</i>
 											<p class="hidden-lg hidden-md">Próximo tempo.</p>
 										</a>
@@ -61,7 +61,7 @@
 										</ul>
 									</li>
 								</ul>
-								<a class="navbar-brand" href="#">Executando tempo <strong>1 de 35</strong></a>
+								<a id="instruction" class="navbar-brand" href="#"></a>
 							</div>
 
 							<form class="navbar-form navbar-right" role="search">
@@ -85,11 +85,11 @@
 							</div>
 							<div class="card-content">
 								<p class="category">Memória Primária</p>
-								<h3 class="title">16/32 <small>Bytes alocados.</small></h3>
+								<h3 id="primaryMemorySize" class="title">16/32 <small>Bytes alocados.</small></h3>
 							</div>
 							<div class="card-footer">
 								<div class="stats">
-									<i class="material-icons">info</i> Última Página Adicionada: <strong>Página 04</strong>
+									<i class="material-icons">info</i> <div id="lastPagePrimaryMemory">Última Página Adicionada: <strong>Página 04</strong></div>
 								</div>
 							</div>
 						</div>
@@ -101,11 +101,11 @@
 							</div>
 							<div class="card-content">
 								<p class="category">Memória Virtual</p>
-								<h3 class="title">162/2048 <small>Bytes alocados.</small></h3>
+								<h3 id="virtualMemorySize" class="title">162/2048 <small>Bytes alocados.</small></h3>
 							</div>
 							<div class="card-footer">
 								<div class="stats">
-									<i class="material-icons">info</i>Última página adicionada: <strong>Página 02 do Processo 02</strong>
+									<i class="material-icons">info</i> <div id="lastPageVirtualMemory"></div>
 								</div>
 							</div>
 						</div>
@@ -117,11 +117,11 @@
 							</div>
 							<div class="card-content">
 								<p class="category">Swap</p>
-								<h3 class="title">324/512 <small>Bytes alocados.</small></h3>
+								<h3 id="swapMemorySize" class="title">324/512 <small>Bytes alocados.</small></h3>
 							</div>
 							<div class="card-footer">
 								<div class="stats">
-									<i class="material-icons">local_offer</i> Última página adicionada: <strong>Página 03 do Processo 02.</strong>
+									<i class="material-icons">info</i> <div id="lastPageSwapMemory"></div>
 								</div>
 							</div>
 						</div>
@@ -156,35 +156,9 @@
 									<thead class="text-success">
 										<th>ID do Frame</th>
 										<th>ID da Página</th>
-										<th>Referenciada?</th>
+										<th>ID do Processo</th>
 									</thead>
-									<tbody>
-										<tr>
-											<td>01</td>
-											<td>03</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>02</td>
-											<td>05</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>03</td>
-											<td>21</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>04</td>
-											<td>08</td>
-											<td>Não</td>
-										</tr>
-										<tr>
-											<td>05</td>
-											<td>--</td>
-											<td>--</td>
-										</tr>
-									</tbody>
+									<tbody id="primaryMemoryList"></tbody>
 								</table>
 							</div>
 						</div>
@@ -200,35 +174,9 @@
 									<thead class="text-warning">
 										<th>ID do Frame</th>
 										<th>ID da Página</th>
-										<th>Referenciada?</th>
+										<th>ID do Processo</th>
 									</thead>
-									<tbody>
-										<tr>
-											<td>01</td>
-											<td>03</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>02</td>
-											<td>05</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>03</td>
-											<td>21</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>04</td>
-											<td>08</td>
-											<td>Não</td>
-										</tr>
-										<tr>
-											<td>05</td>
-											<td>--</td>
-											<td>--</td>
-										</tr>
-									</tbody>
+									<tbody id="virtualMemoryList"></tbody>
 								</table>
 							</div>
 						</div>
@@ -237,42 +185,16 @@
 						<div class="card">
 							<div class="card-header" data-background-color="red">
 								<h4 class="title">Dados SWAP</h4>
-								<p class="category">Esta tabela mostra todas as páginas armazenadas na memória virtual.</p>
+								<p class="category">Esta tabela mostra todas as páginas armazenadas na memória swap.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-danger">
 										<th>ID do Frame</th>
 										<th>ID da Página</th>
-										<th>Referenciada?</th>
+										<th>ID do Processo</th>
 									</thead>
-									<tbody>
-										<tr>
-											<td>01</td>
-											<td>03</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>02</td>
-											<td>05</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>03</td>
-											<td>21</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>04</td>
-											<td>08</td>
-											<td>Não</td>
-										</tr>
-										<tr>
-											<td>05</td>
-											<td>--</td>
-											<td>--</td>
-										</tr>
-									</tbody>
+									<tbody id="swapMemoryList"></tbody>
 								</table>
 							</div>
 						</div>
@@ -288,7 +210,7 @@
 									<thead class="text-info">
 										<th>ID do Frame</th>
 										<th>ID da Página</th>
-										<th>Referenciada?</th>
+										<th>ID do Processo</th>
 									</thead>
 									<tbody>
 										<tr>
