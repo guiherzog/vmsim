@@ -26,6 +26,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
+						<!-- Top menu with steps buttons -->
 						<div class="collapse navbar-collapse">
 							<div class="navbar-header">
 								<ul class="nav navbar-nav navbar-right">
@@ -80,6 +81,22 @@
 				<div class="row">
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="card card-stats">
+							<div class="card-header" data-background-color="blue">
+								<i class="material-icons">trending_flat</i>
+							</div>
+							<div class="card-content">
+								<p class="category">Fila de Requisições</p>
+								<h3 class="title">13 <small>Page Faults.</small></h3>
+							</div>
+							<div class="card-footer">
+								<div class="stats">
+									<i class="material-icons">update</i> Última requisição realizada: <strong>Página 03 do Processo 01.</strong>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6 col-sm-6">
+						<div class="card card-stats">
 							<div class="card-header" data-background-color="green">
 								<i class="material-icons">memory</i>
 							</div>
@@ -116,7 +133,7 @@
 								<i class="material-icons">storage</i>
 							</div>
 							<div class="card-content">
-								<p class="category">Swap</p>
+								<p class="category">SWAP</p>
 								<h3 id="swapMemorySize" class="title">324/512 <small>Bytes alocados.</small></h3>
 							</div>
 							<div class="card-footer">
@@ -126,25 +143,47 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-3 col-md-6 col-sm-6">
-						<div class="card card-stats">
-							<div class="card-header" data-background-color="blue">
-								<i class="material-icons">storage</i>
-							</div>
-							<div class="card-content">
-								<p class="category">Memória Secundária</p>
-								<h3 class="title">132/2028 <small> Bytes alocados.</small></h3>
-							</div>
-							<div class="card-footer">
-								<div class="stats">
-									<i class="material-icons">update</i> Última página requisitada: <strong>Página 03 do Processo 01.</strong>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
 				<!-- Memory tables -->
 				<div class="row">
+					<div class="col-lg-3 col-md-6 col-sm-6">
+						<div class="card">
+							<div class="card-header" data-background-color="blue">
+								<h4 class="title">Fila de Requisições</h4>
+								<p class="category">Esta é a lista de todas requisições de Páginas pela ordem que serão chamadas.</p>
+							</div>
+							<div class="card-content table-responsive">
+								<table class="table table-hover">
+									<thead class="text-info">
+										<th>ID da Página</th>
+										<th>ID do Processo</th>
+									</thead>
+									<tbody>
+										<tr>
+											<td>01</td>
+											<td>03</td>
+										</tr>
+										<tr>
+											<td>02</td>
+											<td>05</td>
+										</tr>
+										<tr>
+											<td>03</td>
+											<td>21</td>
+										</tr>
+										<tr>
+											<td>04</td>
+											<td>08</td>
+										</tr>
+										<tr>
+											<td>05</td>
+											<td>03</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="card">
 							<div class="card-header" data-background-color="green">
@@ -195,50 +234,6 @@
 										<th>ID do Processo</th>
 									</thead>
 									<tbody id="swapMemoryList"></tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 col-md-6 col-sm-6">
-						<div class="card">
-							<div class="card-header" data-background-color="blue">
-								<h4 class="title">Dados Memória Virtual</h4>
-								<p class="category">Esta tabela mostra todas as páginas armazenadas na memória virtual.</p>
-							</div>
-							<div class="card-content table-responsive">
-								<table class="table table-hover">
-									<thead class="text-info">
-										<th>ID do Frame</th>
-										<th>ID da Página</th>
-										<th>ID do Processo</th>
-									</thead>
-									<tbody>
-										<tr>
-											<td>01</td>
-											<td>03</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>02</td>
-											<td>05</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>03</td>
-											<td>21</td>
-											<td>Sim</td>
-										</tr>
-										<tr>
-											<td>04</td>
-											<td>08</td>
-											<td>Não</td>
-										</tr>
-										<tr>
-											<td>05</td>
-											<td>--</td>
-											<td>--</td>
-										</tr>
-									</tbody>
 								</table>
 							</div>
 						</div>
