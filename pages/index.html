@@ -51,23 +51,17 @@
 									<li class="dropdown">
 										<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 											<i class="material-icons">memory</i>
-											<span class="notification" id="numberProcesses">5</span>
+											<span class="notification" id="numberProcesses"></span>
 											<p class="hidden-lg hidden-md">Processos rodando</p>
 										</a>
-										<ul class="dropdown-menu">
-											<li><a href="#">Processo 01</a></li>
-											<li><a href="#">Processo 02</a></li>
-											<li><a href="#">Processo 03</a></li>
-											<li><a href="#">Processo 04</a></li>
-										</ul>
 									</li>
 								</ul>
 								<a id="instruction" class="navbar-brand" href="#"></a>
 							</div>
 
-							<form class="navbar-form navbar-right" role="search">
+							<form id="newRequestForm" class="navbar-form navbar-right" role="search">
 								<div class="form-group  is-empty">
-									<input type="text" class="form-control" placeholder="Adicionar novo processo.">
+									<input id="newRequestField" type="text" class="form-control" placeholder="Adicionar nova requisição.">
 									<span class="material-input"></span>
 								</div>
 								<button type="submit" class="btn btn-white btn-round btn-just-icon">
@@ -147,11 +141,6 @@
 				<!-- Memory tables -->
 				<div class="row">
 					<div class="col-lg-3 col-md-6 col-sm-6">
-						<div id="logContainer" class="alert alert-success alert-with-icon" data-notify="container">
-							<button type="button" aria-hidden="true" class="close">×</button>
-							<i data-notify="icon" class="material-icons">check</i>
-							<span id="logText" data-notify="message"></span>
-						</div>
 						<div class="card">
 							<div class="card-header" data-background-color="blue">
 								<h4 class="title">Fila de Requisições</h4>
@@ -166,6 +155,11 @@
 									<tbody id="instructionList"></tbody>
 								</table>
 							</div>
+						</div>
+						<div id="logContainer" class="alert alert-success alert-with-icon" data-notify="container">
+							<button type="button" aria-hidden="true" class="close">×</button>
+							<i data-notify="icon" class="material-icons">check</i>
+							<span id="logText" data-notify="message"></span>
 						</div>
 					</div>
 					<div class="col-lg-3 col-md-6 col-sm-6">

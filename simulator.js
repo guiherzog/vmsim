@@ -40,7 +40,7 @@ var numberPageFaults = 0;
 
 var instructionList = [];
 // Random number of instructions between 20 and 5
-const numberInstructions = Math.floor(Math.random() * (31 - 10)) + 10;
+var numberInstructions = Math.floor(Math.random() * (10 - 5)) + 5;
 // Generating random instructions
 for (var i = 0; i < numberInstructions; i++) {
 	instructionList.push({
@@ -192,10 +192,20 @@ function checkMemory(memoryType, page, pageToSave=null){
 /*===== RENDER METHODS =====*/
 // Initialising render event listeners and innerHTMLs that will not be modified anymore.
 function initRender(){
-	$("numberProcesses").html(numberProcesses);
+	$("#numberProcesses").text(numberProcesses);
 	document.getElementById("playButton").addEventListener("click", runInstruction);
 	document.getElementById("playAllButton").addEventListener("click", runAllInstructions);
 	document.getElementById("stopButton").addEventListener("click", stopRunning);
+	$("#newRequestForm").submit((e)=>{
+		e.preventDefault();
+		let value = $("#newRequestField").val().split(';');
+		instructionList.push({
+			processId: value[0],
+			pageId: value[1]
+		});
+		numberInstructions++;
+		renderList();
+	})
 }
 
 function renderMemorySizeStats(){
@@ -211,30 +221,7 @@ function renderLog(){
 	})
 }
 
-// Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
-function renderData(){
-	$("#instruction").html(`Executando tempo <strong>${numberInstructions - instructionList.length} de ${numberInstructions}</strong>`);
-	$('#pageFaults').html(`${numberPageFaults} <small>Page Faults.</small>`);
-
-	renderMemorySizeStats();
-
-	if (primaryMemoryList.length > 0)
-		document.getElementById("lastPageRequested").innerHTML = `Última Página Requisitada: <strong>Página ${primaryMemoryList[primaryMemoryList.length-1].pageId} do Processo ${primaryMemoryList[primaryMemoryList.length-1].processId}</strong>`;
-	else
-		document.getElementById("lastPageRequested").innerHTML = `Última Página Requisitada: <strong>--</strong>`;
-	if (primaryMemoryList.length > 0)
-		document.getElementById("lastPagePrimaryMemory").innerHTML = `Última Página Adicionada: <strong>Página ${primaryMemoryList[primaryMemoryList.length-1].pageId} do Processo ${primaryMemoryList[primaryMemoryList.length-1].processId}</strong>`;
-	else
-		document.getElementById("lastPagePrimaryMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
-	if (virtualMemoryList.length > 0)
-		document.getElementById("lastPageVirtualMemory").innerHTML = `Última Página Adicionada: <strong>Página ${virtualMemoryList[virtualMemoryList.length-1].pageId} do Processo ${virtualMemoryList[virtualMemoryList.length-1].processId}</strong>`;
-	else
-		document.getElementById("lastPageVirtualMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
-	if (swapMemoryList.length > 0)
-		document.getElementById("lastPageSwapMemory").innerHTML = `Última Página Adicionada: <strong>Página ${swapMemoryList[swapMemoryList.length-1].pageId} do Processo ${swapMemoryList[swapMemoryList.length-1].processId}</strong>`;
-	else
-		document.getElementById("lastPageSwapMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
-
+function renderList(){
 	document.getElementById("instructionList").innerHTML = ""
 	for (var i = 0; i < instructionList.length; i++) {
 		document.getElementById("instructionList").innerHTML += `
@@ -274,7 +261,34 @@ function renderData(){
 			</tr>
 		`;
 	}
+	$("#instruction").html(`Executando tempo <strong>${numberInstructions - instructionList.length} de ${numberInstructions}</strong>`);
+}
 
+// Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
+function renderData(){
+	$('#pageFaults').html(`${numberPageFaults} <small>Page Faults.</small>`);
+
+	renderMemorySizeStats();
+
+	if (primaryMemoryList.length > 0)
+		document.getElementById("lastPageRequested").innerHTML = `Última Página Requisitada: <strong>Página ${primaryMemoryList[primaryMemoryList.length-1].pageId} do Processo ${primaryMemoryList[primaryMemoryList.length-1].processId}</strong>`;
+	else
+		document.getElementById("lastPageRequested").innerHTML = `Última Página Requisitada: <strong>--</strong>`;
+	if (primaryMemoryList.length > 0)
+		document.getElementById("lastPagePrimaryMemory").innerHTML = `Última Página Adicionada: <strong>Página ${primaryMemoryList[primaryMemoryList.length-1].pageId} do Processo ${primaryMemoryList[primaryMemoryList.length-1].processId}</strong>`;
+	else
+		document.getElementById("lastPagePrimaryMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
+	if (virtualMemoryList.length > 0)
+		document.getElementById("lastPageVirtualMemory").innerHTML = `Última Página Adicionada: <strong>Página ${virtualMemoryList[virtualMemoryList.length-1].pageId} do Processo ${virtualMemoryList[virtualMemoryList.length-1].processId}</strong>`;
+	else
+		document.getElementById("lastPageVirtualMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
+	if (swapMemoryList.length > 0)
+		document.getElementById("lastPageSwapMemory").innerHTML = `Última Página Adicionada: <strong>Página ${swapMemoryList[swapMemoryList.length-1].pageId} do Processo ${swapMemoryList[swapMemoryList.length-1].processId}</strong>`;
+	else
+		document.getElementById("lastPageSwapMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
+
+	// Rendering instructions list and memory data;
+	renderList();
 	// Showing instruction logs
 	renderLog();
 }
