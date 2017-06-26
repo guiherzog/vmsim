@@ -1,8 +1,8 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
-const numberPages = 8;
-const numberProcesses = 16;
+const numberPages = 4;
+const numberProcesses = 3;
 
 var processList = [];
 for (var i = 0; i < numberProcesses; i++) {
@@ -19,9 +19,9 @@ for (var i = 0; i < numberProcesses; i++) {
 }
 
 // Page size in bytes
-const pageSize = 1024;
+const pageSize = 4096;
 // Memory size in pages
-const primaryMemorySize = 4;
+const primaryMemorySize = 2;
 const virtualMemorySize = primaryMemorySize * 1;
 const swapMemorySize = primaryMemorySize * 16;
 const secondaryMemorySize = primaryMemorySize * 64;
@@ -107,7 +107,6 @@ function checkMemory(memoryType, page, pageToSave=null){
 		case 3: // Secondary
 			// Stopping condition: Page is always stored inside the disk
 			// No indexes are considered for it
-			// PAGE FAULT: page isn't located in any memory, so it will be requested from disk.
 			instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} no disco...`;
 			instructionLog += "\nPágina Encontrada!";
 			if (pageToSave != null)
@@ -120,7 +119,7 @@ function checkMemory(memoryType, page, pageToSave=null){
 	instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} ${memoryName}...`;
 	// Search for the page inside the current memory list
 	var index = memoryList.findIndex(function(element){
-		return element == page;
+		return element.processId == page.processId && element.pageId == page.pageId;
 	});
 	// If it's found, return it, and save any page (sent from an upper memory that's full)
 	// There's no need to verify if it has space to save since it can swap the requested page with the sent page (worst case)
@@ -137,6 +136,9 @@ function checkMemory(memoryType, page, pageToSave=null){
 	}
 	// If it isn't found, send a request for the next memory
 	else {
+		// PAGE FAULT: page isn't located in any memory, so it will be requested from disk.
+		if (memoryType == 0)
+			instructionLog += "\nPage Fault! Página não se encontra na Memória Principal. Página será recuperada do disco.";
 		instructionLog += `\nPágina não se encontra ${memoryName}.`;
 		if (memoryList.length == memorySize){
 			// PAGE SWAP: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
