@@ -61,7 +61,7 @@
 
 							<form id="newRequestForm" class="navbar-form navbar-right" role="search">
 								<div class="form-group  is-empty">
-									<input id="newRequestField" type="text" class="form-control" placeholder="Adicionar nova requisição.">
+									<input id="newRequestField" type="text" class="form-control" placeholder="Adicionar requisição.">
 									<span class="material-input"></span>
 								</div>
 								<button type="submit" class="btn btn-white btn-round btn-just-icon">
@@ -108,10 +108,10 @@
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="card card-stats">
 							<div class="card-header" data-background-color="orange">
-								<i class="material-icons">memory</i>
+								<i class="material-icons">storage</i>
 							</div>
 							<div class="card-content">
-								<p class="category">Memória Virtual</p>
+								<p class="category">Área de Swap</p>
 								<h3 id="virtualMemorySize" class="title">162/2048 <small>Bytes alocados.</small></h3>
 							</div>
 							<div class="card-footer">
@@ -124,15 +124,15 @@
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="card card-stats">
 							<div class="card-header" data-background-color="red">
-								<i class="material-icons">storage</i>
+								<i class="material-icons">library_books</i>
 							</div>
 							<div class="card-content">
-								<p class="category">SWAP</p>
-								<h3 id="swapMemorySize" class="title">324/512 <small>Bytes alocados.</small></h3>
+								<p class="category">Tabela de Páginas de Processos</p>
+								<h3 id="processesTableSize" class="title"></h3>
 							</div>
 							<div class="card-footer">
 								<div class="stats">
-									<i class="material-icons">info</i> <div id="lastPageSwapMemory"></div>
+									<i class="material-icons">info</i> O número de páginas de um processo é fixo.
 								</div>
 							</div>
 						</div>
@@ -183,8 +183,8 @@
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="card">
 							<div class="card-header" data-background-color="orange">
-								<h4 class="title">Dados Memória Virtual</h4>
-								<p class="category">Esta tabela mostra todas as páginas armazenadas na memória virtual.</p>
+								<h4 class="title">Dados SWAP</h4>
+								<p class="category">Esta tabela mostra todas as páginas armazenadas na área de swap.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
@@ -201,15 +201,15 @@
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="card">
 							<div class="card-header" data-background-color="red">
-								<h4 class="title">Dados SWAP</h4>
-								<p class="category">Esta tabela mostra todas as páginas armazenadas na memória swap.</p>
+								<h4 class="title">Tabela de Páginas Processo 01</h4>
+								<p class="category">Esta tabela mostra todas as páginas mapeadas ou não do processo.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-danger">
+										<th>ID do Página</th>
+										<th>Mapeada?</th>
 										<th>ID do Frame</th>
-										<th>ID da Página</th>
-										<th>ID do Processo</th>
 									</thead>
 									<tbody id="swapMemoryList"></tbody>
 								</table>

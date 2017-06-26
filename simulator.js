@@ -23,13 +23,12 @@ for (var i = 0; i < numberProcesses; i++) {
 const pageSize = 4096;
 // Memory size in pages
 const primaryMemorySize = 4;
-const virtualMemorySize = primaryMemorySize * 1;
+const virtualMemorySize = primaryMemorySize * 4;
 const swapMemorySize = primaryMemorySize * 16;
 const secondaryMemorySize = primaryMemorySize * 64;
 
 var primaryMemoryList = [];
 var virtualMemoryList = [];
-var swapMemoryList = [];
 var secondaryMemoryList = [];
 
 var instructionLog = "";
@@ -75,9 +74,6 @@ function runInstruction(){
 				case 1: // Virtual
 					virtualMemoryList.splice(pageLocation.index, 1);
 					break;
-				case 2: // Swap
-					swapMemoryList.splice(pageLocation.index, 1);
-					break;
 			}
 		}
 		// If the requested page is in primary memory, everything's fine
@@ -85,19 +81,6 @@ function runInstruction(){
 		instructionList.splice(0, 1);
 		renderData();
 	}
-}
-
-// Stop the process of running all instructions
-function stopRunning(){
-	clearInterval(instructionInterval);
-}
-
-// Runs all instructions at once using X ms intervals
-function runAllInstructions(){
-	// Sets a timer to run a instruction every 'runInterval' seconds;
-	instructionInterval = setInterval(runInstruction, runIntervalTime);
-	// Sets a timer to clear the interval after the last instruction is ran.
-	setTimeout(()=>{clearInterval(instructionInterval)}, runIntervalTime*instructionList.length);
 }
 // Searches for the requested page inside all memory tables
 // Recursive function that uses a top-down search process, while considering page swaps
@@ -109,31 +92,26 @@ function checkMemory(memoryType, page, pageToSave=null){
 	// Getting data from the current memory type
 	switch (memoryType){
 		case 0: // Primary
-			memoryList = primaryMemoryList;
-			memorySize = primaryMemorySize;
-			memoryName = "na Memória Primária";
-			break;
+		memoryList = primaryMemoryList;
+		memorySize = primaryMemorySize;
+		memoryName = "na Memória Primária";
+		break;
 		case 1: // Virtual
-			memoryList = virtualMemoryList;
-			memorySize = virtualMemorySize;
-			memoryName = "na Memória Virtual";
-			break;
-		case 2: // Swap
-			memoryList = swapMemoryList;
-			memorySize = swapMemorySize;
-			memoryName = "no Espaço de Swap";
-			break;
-		case 3: // Secondary
-			// Stopping condition: Page is always stored inside the disk
-			// No indexes are considered for it
-			instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} no disco...`;
-			instructionLog += "\nPágina Encontrada!";
-			if (pageToSave != null)
-				instructionLog += `\nSalvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal no disco.`;
-			return {
-				memoryType: 3,
-				index: 0
-			}
+		memoryList = virtualMemoryList;
+		memorySize = virtualMemorySize;
+		memoryName = "na Memória Virtual";
+		break;
+		case 2: // Secondary
+		// Stopping condition: Page is always stored inside the disk
+		// No indexes are considered for it
+		instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} no disco...`;
+		instructionLog += "\nPágina Encontrada!";
+		if (pageToSave != null)
+		instructionLog += `\nSalvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal no disco.`;
+		return {
+			memoryType: 2,
+			index: 0
+		}
 	}
 	instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} ${memoryName}...`;
 	// Search for the page inside the current memory list
@@ -160,7 +138,7 @@ function checkMemory(memoryType, page, pageToSave=null){
 			instructionLog += "\nPage Fault! Página não se encontra na Memória Principal. Página será recuperada do disco.";
 			// numberPageFaults++;
 		}
-		instructionLog += `\nPágina não se encontra ${memoryName}.`;
+		instructionLog += `\n Página não se encontra ${memoryName}.`;
 		if (memoryList.length == memorySize){
 			// PAGE SWAP: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
 			if (memoryType == 0){
@@ -189,6 +167,19 @@ function checkMemory(memoryType, page, pageToSave=null){
 	}
 }
 
+// Stop the process of running all instructions
+function stopRunning(){
+	clearInterval(instructionInterval);
+}
+
+// Runs all instructions at once using X ms intervals
+function runAllInstructions(){
+	// Sets a timer to run a instruction every 'runInterval' seconds;
+	instructionInterval = setInterval(runInstruction, runIntervalTime);
+	// Sets a timer to clear the interval after the last instruction is ran.
+	setTimeout(()=>{clearInterval(instructionInterval)}, runIntervalTime*instructionList.length);
+}
+
 /*===== RENDER METHODS =====*/
 // Initialising render event listeners and innerHTMLs that will not be modified anymore.
 function initRender(){
@@ -211,7 +202,7 @@ function initRender(){
 function renderMemorySizeStats(){
 	document.getElementById("primaryMemorySize").innerHTML = primaryMemoryList.length * pageSize + "/" + primaryMemorySize * pageSize + " <small>Bytes alocados.</small>";
 	document.getElementById("virtualMemorySize").innerHTML = virtualMemoryList.length * pageSize + "/" + virtualMemorySize * pageSize + " <small>Bytes alocados.</small>";
-	document.getElementById("swapMemorySize").innerHTML = swapMemoryList.length * pageSize + "/" + swapMemorySize * pageSize + " <small>Bytes alocados.</small>";
+	document.getElementById("processesTableSize").innerHTML = numberProcesses+" <small>processos alocados.</small>";
 }
 
 function renderLog(){
@@ -222,6 +213,8 @@ function renderLog(){
 }
 
 function renderList(){
+	$("#instruction").html(`Executando tempo <strong>${numberInstructions - instructionList.length} de ${numberInstructions}</strong>`);
+
 	document.getElementById("instructionList").innerHTML = ""
 	for (var i = 0; i < instructionList.length; i++) {
 		document.getElementById("instructionList").innerHTML += `
@@ -251,17 +244,6 @@ function renderList(){
 			</tr>
 		`;
 	}
-	document.getElementById("swapMemoryList").innerHTML = "";
-	for (var i = 0; i < swapMemoryList.length; i++) {
-		document.getElementById("swapMemoryList").innerHTML += `
-			<tr>
-				<td>${i}</td>
-				<td>${swapMemoryList[i].pageId}</td>
-				<td>${swapMemoryList[i].processId}</td>
-			</tr>
-		`;
-	}
-	$("#instruction").html(`Executando tempo <strong>${numberInstructions - instructionList.length} de ${numberInstructions}</strong>`);
 }
 
 // Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
@@ -282,10 +264,6 @@ function renderData(){
 		document.getElementById("lastPageVirtualMemory").innerHTML = `Última Página Adicionada: <strong>Página ${virtualMemoryList[virtualMemoryList.length-1].pageId} do Processo ${virtualMemoryList[virtualMemoryList.length-1].processId}</strong>`;
 	else
 		document.getElementById("lastPageVirtualMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
-	if (swapMemoryList.length > 0)
-		document.getElementById("lastPageSwapMemory").innerHTML = `Última Página Adicionada: <strong>Página ${swapMemoryList[swapMemoryList.length-1].pageId} do Processo ${swapMemoryList[swapMemoryList.length-1].processId}</strong>`;
-	else
-		document.getElementById("lastPageSwapMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
 
 	// Rendering instructions list and memory data;
 	renderList();
