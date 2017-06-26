@@ -14,8 +14,8 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 768,
     // frame: false,
     titleBarStyle: 'hidden'
   })

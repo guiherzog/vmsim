@@ -80,6 +80,14 @@ function runInstruction(){
 	}
 }
 
+// Runs all instructions at once using X ms intervals
+function runAllInstructions(){
+	let runInterval = 300; // 2 seg.
+	// Sets a timer to run a instruction every 'runInterval' seconds;
+	let instructionTimer = setInterval(runInstruction, runInterval);
+	// Sets a timer to clear the interval after the last instruction is ran.
+	setTimeout(()=>{clearInterval(instructionTimer)}, runInterval*instructionList.length)
+}
 // Searches for the requested page inside all memory tables
 // Recursive function that uses a top-down search process, while considering page swaps
 // Search Order: Primary Memory -> Virtual Memory -> Swap Memory -> Secondary Memory
@@ -174,6 +182,7 @@ function initRender(){
 	document.getElementById("playButton").addEventListener("click", function(){
 		runInstruction();
 	});
+	document.getElementById("playAllButton").addEventListener("click", runAllInstructions);
 }
 
 // Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
