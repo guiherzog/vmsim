@@ -31,6 +31,8 @@ var virtualMemoryList = [];
 var swapMemoryList = [];
 var secondaryMemoryList = [];
 
+var instructionLog = "";
+
 var instructionList = [];
 // Random number of instructions between 20 and 5
 const numberInstructions = Math.floor(Math.random() * (21 - 5)) + 5;
@@ -51,12 +53,14 @@ runInstruction();
 // Runs next page request from a page. After finding it, updates all memory lists and renders data
 function runInstruction(){
 	if (instructionList.length > 0) {
+		instructionLog = "Iniciando próxima requisição...";
 		var pageLocation = checkMemory(0, instructionList[0]);
 		// If the requested page isn't in primary memory, it's necessary to push it
 		if (pageLocation.memoryType != 0){
 			// push() returns the new length of the array
 			var frame = primaryMemoryList.push(instructionList[0]) - 1;
 			// Updating process' page on its page table
+			instructionLog += `\nAtualizando Tabela de Página do Processo ${instructionList[0].processId} com o frame atual da Página ${instructionList[0].pageId}.`;
 			processList[instructionList[0].processId][instructionList[0].pageId].p = true;
 			processList[instructionList[0].processId][instructionList[0].pageId].frame = frame;
 			// Removing requested page from its previous location
@@ -82,29 +86,38 @@ function runInstruction(){
 function checkMemory(memoryType, page, pageToSave=null){
 	var memoryList;
 	var memorySize;
+	var memoryName;
 	// Getting data from the current memory type
 	switch (memoryType){
 		case 0: // Primary
 			memoryList = primaryMemoryList;
 			memorySize = primaryMemorySize;
+			memoryName = "na Memória Primária";
 			break;
 		case 1: // Virtual
 			memoryList = virtualMemoryList;
 			memorySize = virtualMemorySize;
+			memoryName = "na Memória Virtual";
 			break;
 		case 2: // Swap
 			memoryList = swapMemoryList;
 			memorySize = swapMemorySize;
+			memoryName = "no Espaço de Swap";
 			break;
 		case 3: // Secondary
 			// Stopping condition: Page is always stored inside the disk
 			// No indexes are considered for it
 			// PAGE FAULT: page isn't located in any memory, so it will be requested from disk.
+			instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} no disco...`;
+			instructionLog += "\nPágina Encontrada!";
+			if (pageToSave != null)
+				instructionLog += `\nSalvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal no disco.`;
 			return {
 				memoryType: 3,
 				index: 0
 			}
 	}
+	instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} ${memoryName}...`;
 	// Search for the page inside the current memory list
 	var index = memoryList.findIndex(function(element){
 		return element == page;
@@ -112,7 +125,9 @@ function checkMemory(memoryType, page, pageToSave=null){
 	// If it's found, return it, and save any page (sent from an upper memory that's full)
 	// There's no need to verify if it has space to save since it can swap the requested page with the sent page (worst case)
 	if (index != -1){
+		instructionLog += "\nPágina Encontrada!";
 		if (pageToSave != null){
+			instructionLog += `\nSalvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal ${memoryName}.`;
 			memoryList.push(pageToSave);
 		}
 		return {
@@ -122,26 +137,27 @@ function checkMemory(memoryType, page, pageToSave=null){
 	}
 	// If it isn't found, send a request for the next memory
 	else {
+		instructionLog += `\nPágina não se encontra ${memoryName}.`;
 		if (memoryList.length == memorySize){
 			// PAGE SWAP: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
 			if (memoryType == 0){
 				// Current Substitution Algorithm: FIFO
 				// Splice returns an array with the removed elements
 				pageToSave = memoryList.splice(0, 1)[0];
+				instructionLog += `\nMemória Primária cheia. Abrindo espaço removendo a Página ${pageToSave.pageId} do Processo ${pageToSave.processId}.`;
 				// Change presence bit to false since it will be removed from primary memory
 				processList[pageToSave.processId][pageToSave.pageId].p = false;
 				return checkMemory(++memoryType, page, pageToSave);
 			}
 			else {
 				// If the current memory received a page to save from a upper memory and it's full as well, send it to the next memory
-				if (pageToSave != null){
-					return checkMemory(++memoryType, page, pageToSave);
-				}
+				return checkMemory(++memoryType, page, pageToSave);
 			}
 		}
 		else {
 			// If the current memory received a page to save, save it
 			if (pageToSave != null){
+				instructionLog += `\nSalvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal ${memoryName}.`;
 				memoryList.push(pageToSave);
 			}
 			// There's no need to send the saved page for the next memory since it wasn't full
@@ -209,4 +225,7 @@ function renderData(){
 			</tr>
 		`;
 	}
+
+	// Showing instruction logs
+	console.log(instructionLog);
 }
