@@ -99,6 +99,7 @@ function checkMemory(memoryType, page, pageToSave=null){
 		case 3: // Secondary
 			// Stopping condition: Page is always stored inside the disk
 			// No indexes are considered for it
+			// PAGE FAULT: page isn't located in any memory, so it will be requested from disk.
 			return {
 				memoryType: 3,
 				index: 0
@@ -122,7 +123,7 @@ function checkMemory(memoryType, page, pageToSave=null){
 	// If it isn't found, send a request for the next memory
 	else {
 		if (memoryList.length == memorySize){
-			// PAGE FAULT: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
+			// PAGE SWAP: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
 			if (memoryType == 0){
 				// Current Substitution Algorithm: FIFO
 				// Splice returns an array with the removed elements
