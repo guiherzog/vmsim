@@ -22,7 +22,7 @@ for (var i = 0; i < numberProcesses; i++) {
 // Page size in bytes
 const pageSize = 4096;
 // Memory size in pages
-const primaryMemorySize = 2;
+const primaryMemorySize = 4;
 const virtualMemorySize = primaryMemorySize * 1;
 const swapMemorySize = primaryMemorySize * 16;
 const secondaryMemorySize = primaryMemorySize * 64;
@@ -40,7 +40,7 @@ var numberPageFaults = 0;
 
 var instructionList = [];
 // Random number of instructions between 20 and 5
-const numberInstructions = Math.floor(Math.random() * (21 - 5)) + 5;
+const numberInstructions = Math.floor(Math.random() * (31 - 10)) + 10;
 // Generating random instructions
 for (var i = 0; i < numberInstructions; i++) {
 	instructionList.push({
@@ -62,6 +62,8 @@ function runInstruction(){
 		var pageLocation = checkMemory(0, instructionList[0]);
 		// If the requested page isn't in primary memory, it's necessary to push it
 		if (pageLocation.memoryType != 0){
+			// If it's not in primary memory, it's a page fault.
+			numberPageFaults++;
 			// push() returns the new length of the array
 			var frame = primaryMemoryList.push(instructionList[0]) - 1;
 			// Updating process' page on its page table
@@ -187,24 +189,39 @@ function checkMemory(memoryType, page, pageToSave=null){
 	}
 }
 
+/*===== RENDER METHODS =====*/
 // Initialising render event listeners and innerHTMLs that will not be modified anymore.
 function initRender(){
-	document.getElementById("numberProcesses").innerHTML = numberProcesses;
-	document.getElementById("playButton").addEventListener("click", function(){
-		runInstruction();
-	});
+	$("numberProcesses").html(numberProcesses);
+	document.getElementById("playButton").addEventListener("click", runInstruction);
 	document.getElementById("playAllButton").addEventListener("click", runAllInstructions);
 	document.getElementById("stopButton").addEventListener("click", stopRunning);
+}
+
+function renderMemorySizeStats(){
+	document.getElementById("primaryMemorySize").innerHTML = primaryMemoryList.length * pageSize + "/" + primaryMemorySize * pageSize + " <small>Bytes alocados.</small>";
+	document.getElementById("virtualMemorySize").innerHTML = virtualMemoryList.length * pageSize + "/" + virtualMemorySize * pageSize + " <small>Bytes alocados.</small>";
+	document.getElementById("swapMemorySize").innerHTML = swapMemoryList.length * pageSize + "/" + swapMemorySize * pageSize + " <small>Bytes alocados.</small>";
+}
+
+function renderLog(){
+	$("#logContainer").fadeOut(300, ()=>{
+		$("#logText").html(instructionLog);
+		$("#logContainer").fadeIn(300,null);
+	})
 }
 
 // Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
 function renderData(){
 	$("#instruction").html(`Executando tempo <strong>${numberInstructions - instructionList.length} de ${numberInstructions}</strong>`);
 	$('#pageFaults').html(`${numberPageFaults} <small>Page Faults.</small>`);
-	document.getElementById("primaryMemorySize").innerHTML = primaryMemoryList.length * pageSize + "/" + primaryMemorySize * pageSize + " <small>Bytes alocados.</small>";
-	document.getElementById("virtualMemorySize").innerHTML = virtualMemoryList.length * pageSize + "/" + virtualMemorySize * pageSize + " <small>Bytes alocados.</small>";
-	document.getElementById("swapMemorySize").innerHTML = swapMemoryList.length * pageSize + "/" + swapMemorySize * pageSize + " <small>Bytes alocados.</small>";
 
+	renderMemorySizeStats();
+
+	if (primaryMemoryList.length > 0)
+		document.getElementById("lastPageRequested").innerHTML = `Última Página Requisitada: <strong>Página ${primaryMemoryList[primaryMemoryList.length-1].pageId} do Processo ${primaryMemoryList[primaryMemoryList.length-1].processId}</strong>`;
+	else
+		document.getElementById("lastPageRequested").innerHTML = `Última Página Requisitada: <strong>--</strong>`;
 	if (primaryMemoryList.length > 0)
 		document.getElementById("lastPagePrimaryMemory").innerHTML = `Última Página Adicionada: <strong>Página ${primaryMemoryList[primaryMemoryList.length-1].pageId} do Processo ${primaryMemoryList[primaryMemoryList.length-1].processId}</strong>`;
 	else
@@ -218,6 +235,15 @@ function renderData(){
 	else
 		document.getElementById("lastPageSwapMemory").innerHTML = `Última Página Adicionada: <strong>--</strong>`;
 
+	document.getElementById("instructionList").innerHTML = ""
+	for (var i = 0; i < instructionList.length; i++) {
+		document.getElementById("instructionList").innerHTML += `
+			<tr>
+				<td>${instructionList[i].processId}</td>
+				<td>${instructionList[i].pageId}</td>
+			</tr>
+		`;
+	}
 	document.getElementById("primaryMemoryList").innerHTML = "";
 	for (var i = 0; i < primaryMemoryList.length; i++) {
 		document.getElementById("primaryMemoryList").innerHTML += `
@@ -250,5 +276,5 @@ function renderData(){
 	}
 
 	// Showing instruction logs
-	console.log(instructionLog);
+	renderLog();
 }

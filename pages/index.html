@@ -90,7 +90,7 @@
 							</div>
 							<div class="card-footer">
 								<div class="stats">
-									<i class="material-icons">update</i> Última requisição realizada: <strong>Página 03 do Processo 01.</strong>
+									<i class="material-icons" >update</i> <div id="lastPageRequested"></div>
 								</div>
 							</div>
 						</div>
@@ -106,7 +106,7 @@
 							</div>
 							<div class="card-footer">
 								<div class="stats">
-									<i class="material-icons">info</i> <div id="lastPagePrimaryMemory">Última Página Adicionada: <strong>Página 04</strong></div>
+									<i class="material-icons">info</i> <div id="lastPagePrimaryMemory"></div>
 								</div>
 							</div>
 						</div>
@@ -147,10 +147,10 @@
 				<!-- Memory tables -->
 				<div class="row">
 					<div class="col-lg-3 col-md-6 col-sm-6">
-						<div class="alert alert-success alert-with-icon" data-notify="container">
+						<div id="logContainer" class="alert alert-success alert-with-icon" data-notify="container">
 							<button type="button" aria-hidden="true" class="close">×</button>
 							<i data-notify="icon" class="material-icons">check</i>
-							<span data-notify="message">Página 03 do Processo 02 requisitada com sucesso.</span>
+							<span id="logText" data-notify="message"></span>
 						</div>
 						<div class="card">
 							<div class="card-header" data-background-color="blue">
@@ -160,31 +160,10 @@
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-info">
-										<th>ID da Página</th>
 										<th>ID do Processo</th>
+										<th>ID da Página</th>
 									</thead>
-									<tbody>
-										<tr>
-											<td>01</td>
-											<td>03</td>
-										</tr>
-										<tr>
-											<td>02</td>
-											<td>05</td>
-										</tr>
-										<tr>
-											<td>03</td>
-											<td>21</td>
-										</tr>
-										<tr>
-											<td>04</td>
-											<td>08</td>
-										</tr>
-										<tr>
-											<td>05</td>
-											<td>03</td>
-										</tr>
-									</tbody>
+									<tbody id="instructionList"></tbody>
 								</table>
 							</div>
 						</div>
