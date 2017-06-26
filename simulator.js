@@ -29,22 +29,25 @@ const secondaryMemorySize = primaryMemorySize * 64;
 
 var primaryMemoryList = [];
 var virtualMemoryList = [];
-var secondaryMemoryList = [];
 
 var instructionLog = "";
 var instructionInterval;
 
 // Stats
 var numberPageFaults = 0;
+var clockIndex = 0;
 
 var instructionList = [];
 // Random number of instructions between 20 and 5
-var numberInstructions = Math.floor(Math.random() * (10 - 5)) + 5;
+const maxInstructions = 25;
+const minInstructions = 15
+var numberInstructions = Math.floor(Math.random() * (maxInstructions - minInstructions)) + minInstructions;
 // Generating random instructions
 for (var i = 0; i < numberInstructions; i++) {
 	instructionList.push({
 		processId: Math.floor(Math.random() * numberProcesses),
-		pageId: Math.floor(Math.random() * numberPages)
+		pageId: Math.floor(Math.random() * numberPages),
+		referenced: false,
 	});
 }
 
@@ -59,12 +62,19 @@ function runInstruction(){
 	if (instructionList.length > 0) {
 		instructionLog = "Iniciando próxima requisição...";
 		var pageLocation = checkMemory(0, instructionList[0]);
+		console.log(clockIndex)
 		// If the requested page isn't in primary memory, it's necessary to push it
 		if (pageLocation.memoryType != 0){
 			// If it's not in primary memory, it's a page fault.
 			numberPageFaults++;
 			// push() returns the new length of the array
-			var frame = primaryMemoryList.push(instructionList[0]) - 1;
+			clockIndex - 1 === -1 ? pushIndex = primaryMemoryList.length-1 : pushIndex = clockIndex-1;
+			if (primaryMemoryList.length == primaryMemorySize){
+				primaryMemoryList[pushIndex] = instructionList[0];
+				var frame = pushIndex;
+			}
+			else
+				var frame = primaryMemoryList.push(instructionList[0]) - 1;
 			// Updating process' page on its page table
 			instructionLog += `<br> Atualizando Tabela de Página do Processo ${instructionList[0].processId} com o frame atual da Página ${instructionList[0].pageId}.`;
 			processList[instructionList[0].processId][instructionList[0].pageId].p = true;
@@ -122,6 +132,9 @@ function checkMemory(memoryType, page, pageToSave=null){
 	// There's no need to verify if it has space to save since it can swap the requested page with the sent page (worst case)
 	if (index != -1){
 		instructionLog += "<br> Página Encontrada!";
+		if (memoryType === 0){
+			memoryList[index].referenced = true;
+		}
 		if (pageToSave != null){
 			instructionLog += `<br> Salvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal ${memoryName}.`;
 			memoryList.push(pageToSave);
@@ -142,9 +155,8 @@ function checkMemory(memoryType, page, pageToSave=null){
 		if (memoryList.length == memorySize){
 			// PAGE SWAP: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
 			if (memoryType == 0){
-				// Current Substitution Algorithm: FIFO
-				// Splice returns an array with the removed elements
-				pageToSave = memoryList.splice(0, 1)[0];
+				// Current Substitution Algorithm: CLOCK
+				pageToSave = clockSubstitution(memoryList);
 				instructionLog += `<br> Memória Primária cheia. Abrindo espaço removendo a Página ${pageToSave.pageId} do Processo ${pageToSave.processId}.`;
 				// Change presence bit to false since it will be removed from primary memory
 				processList[pageToSave.processId][pageToSave.pageId].p = false;
@@ -165,6 +177,26 @@ function checkMemory(memoryType, page, pageToSave=null){
 			return checkMemory(++memoryType, page);
 		}
 	}
+}
+
+function clockSubstitution(memoryList){
+	while (true){
+		if (memoryList[clockIndex].referenced)
+		{
+			memoryList[clockIndex].referenced = false;
+			clockIndex++;
+		} else {
+			// Update the reference bit.
+			let res = memoryList[clockIndex];
+			clockIndex = ++clockIndex % primaryMemoryList.length;
+			return res;
+		}
+		// If it's finished looking on the memory, start again.
+		if (clockIndex >= memoryList.length)
+			clockIndex = 0;
+		console.log('algclock:'+clockIndex);
+	}
+
 }
 
 // Stop the process of running all instructions
@@ -192,7 +224,8 @@ function initRender(){
 		let value = $("#newRequestField").val().split(';');
 		instructionList.push({
 			processId: value[0],
-			pageId: value[1]
+			pageId: value[1],
+			referenced: false,
 		});
 		numberInstructions++;
 		renderList();
@@ -230,7 +263,7 @@ function renderProcessesList(){
 	document.getElementById("processesPageTable").innerHTML = "";
 	for (var i = 0; i < numberProcesses; i++) {
 		document.getElementById("processesPageTable").innerHTML += `
-		<h4>Process 0${i}</h4>
+		<h4>Processo ${i}</h4>
 		<table class="table table-hover">
 			<thead class="text-danger">
 				<th>ID da Página</th>
@@ -259,10 +292,11 @@ function renderList(){
 	document.getElementById("primaryMemoryList").innerHTML = "";
 	for (var i = 0; i < primaryMemoryList.length; i++) {
 		document.getElementById("primaryMemoryList").innerHTML += `
-			<tr>
+			<tr ${i === clockIndex ? 'class="info"':null}>
 				<td>${i}</td>
-				<td>${primaryMemoryList[i].pageId}</td>
 				<td>${primaryMemoryList[i].processId}</td>
+				<td>${primaryMemoryList[i].pageId}</td>
+				<td>${primaryMemoryList[i].referenced}</td>
 			</tr>
 		`;
 	}
@@ -271,8 +305,8 @@ function renderList(){
 		document.getElementById("virtualMemoryList").innerHTML += `
 			<tr>
 				<td>${i}</td>
-				<td>${virtualMemoryList[i].pageId}</td>
 				<td>${virtualMemoryList[i].processId}</td>
+				<td>${virtualMemoryList[i].pageId}</td>
 			</tr>
 		`;
 	}

@@ -144,13 +144,13 @@
 						<div class="card">
 							<div class="card-header" data-background-color="blue">
 								<h4 class="title">Fila de Requisições</h4>
-								<p class="category">Esta é a lista de todas requisições de Páginas pela ordem que serão chamadas.</p>
+								<p class="category">Esta é a lista de todas requisições de Páginas feitas pela CPU e sendo atendidas usando FIFO.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-info">
-										<th>ID do Processo</th>
-										<th>ID da Página</th>
+										<th>Processo</th>
+										<th>Página</th>
 									</thead>
 									<tbody id="instructionList"></tbody>
 								</table>
@@ -166,14 +166,15 @@
 						<div class="card">
 							<div class="card-header" data-background-color="green">
 								<h4 class="title">Dados Memória Primária</h4>
-								<p class="category">Esta tabela mostra todas as páginas armazenadas na memória primária.</p>
+								<p class="category">Esta tabela mostra todas as páginas armazenadas na memória primária usando a técnica de substituição Clock.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-success">
-										<th>ID do Frame</th>
-										<th>ID da Página</th>
-										<th>ID do Processo</th>
+										<th>Frame</th>
+										<th>Processo</th>
+										<th>Página</th>
+										<th>Referenciada?</th>
 									</thead>
 									<tbody id="primaryMemoryList"></tbody>
 								</table>
@@ -184,14 +185,14 @@
 						<div class="card">
 							<div class="card-header" data-background-color="orange">
 								<h4 class="title">Dados SWAP</h4>
-								<p class="category">Esta tabela mostra todas as páginas armazenadas na área de swap.</p>
+								<p class="category">Esta tabela mostra todas as páginas armazenadas na área de swap pelo uso da técnica de paging.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-warning">
-										<th>ID do Frame</th>
-										<th>ID da Página</th>
-										<th>ID do Processo</th>
+										<th>Frame</th>
+										<th>Processo</th>
+										<th>Página</th>
 									</thead>
 									<tbody id="virtualMemoryList"></tbody>
 								</table>
