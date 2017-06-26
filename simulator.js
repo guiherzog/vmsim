@@ -66,7 +66,7 @@ function runInstruction(){
 			// push() returns the new length of the array
 			var frame = primaryMemoryList.push(instructionList[0]) - 1;
 			// Updating process' page on its page table
-			instructionLog += `\nAtualizando Tabela de Página do Processo ${instructionList[0].processId} com o frame atual da Página ${instructionList[0].pageId}.`;
+			instructionLog += `<br> Atualizando Tabela de Página do Processo ${instructionList[0].processId} com o frame atual da Página ${instructionList[0].pageId}.`;
 			processList[instructionList[0].processId][instructionList[0].pageId].p = true;
 			processList[instructionList[0].processId][instructionList[0].pageId].frame = frame;
 			// Removing requested page from its previous location
@@ -104,16 +104,16 @@ function checkMemory(memoryType, page, pageToSave=null){
 		case 2: // Secondary
 		// Stopping condition: Page is always stored inside the disk
 		// No indexes are considered for it
-		instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} no disco...`;
-		instructionLog += "\nPágina Encontrada!";
+		instructionLog += `<br> Procurando por Página ${page.pageId} do Processo ${page.processId} no disco...`;
+		instructionLog += "<br> Página Encontrada!";
 		if (pageToSave != null)
-		instructionLog += `\nSalvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal no disco.`;
+		instructionLog += `<br> Salvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal no disco.`;
 		return {
 			memoryType: 2,
 			index: 0
 		}
 	}
-	instructionLog += `\nProcurando por Página ${page.pageId} do Processo ${page.processId} ${memoryName}...`;
+	instructionLog += `<br> Procurando por Página ${page.pageId} do Processo ${page.processId} ${memoryName}...`;
 	// Search for the page inside the current memory list
 	var index = memoryList.findIndex(function(element){
 		return element.processId == page.processId && element.pageId == page.pageId;
@@ -121,9 +121,9 @@ function checkMemory(memoryType, page, pageToSave=null){
 	// If it's found, return it, and save any page (sent from an upper memory that's full)
 	// There's no need to verify if it has space to save since it can swap the requested page with the sent page (worst case)
 	if (index != -1){
-		instructionLog += "\nPágina Encontrada!";
+		instructionLog += "<br> Página Encontrada!";
 		if (pageToSave != null){
-			instructionLog += `\nSalvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal ${memoryName}.`;
+			instructionLog += `<br> Salvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal ${memoryName}.`;
 			memoryList.push(pageToSave);
 		}
 		return {
@@ -135,17 +135,17 @@ function checkMemory(memoryType, page, pageToSave=null){
 	else {
 		// PAGE FAULT: page isn't located in any memory, so it will be requested from disk.
 		if (memoryType == 0){
-			instructionLog += "\nPage Fault! Página não se encontra na Memória Principal. Página será recuperada do disco.";
+			instructionLog += "<br> Page Fault! Página não se encontra na Memória Principal. Página será recuperada do disco.";
 			// numberPageFaults++;
 		}
-		instructionLog += `\n Página não se encontra ${memoryName}.`;
+		instructionLog += `<br> Página não se encontra ${memoryName}.`;
 		if (memoryList.length == memorySize){
 			// PAGE SWAP: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
 			if (memoryType == 0){
 				// Current Substitution Algorithm: FIFO
 				// Splice returns an array with the removed elements
 				pageToSave = memoryList.splice(0, 1)[0];
-				instructionLog += `\nMemória Primária cheia. Abrindo espaço removendo a Página ${pageToSave.pageId} do Processo ${pageToSave.processId}.`;
+				instructionLog += `<br> Memória Primária cheia. Abrindo espaço removendo a Página ${pageToSave.pageId} do Processo ${pageToSave.processId}.`;
 				// Change presence bit to false since it will be removed from primary memory
 				processList[pageToSave.processId][pageToSave.pageId].p = false;
 				return checkMemory(++memoryType, page, pageToSave);
@@ -158,7 +158,7 @@ function checkMemory(memoryType, page, pageToSave=null){
 		else {
 			// If the current memory received a page to save, save it
 			if (pageToSave != null){
-				instructionLog += `\nSalvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal ${memoryName}.`;
+				instructionLog += `<br> Salvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal ${memoryName}.`;
 				memoryList.push(pageToSave);
 			}
 			// There's no need to send the saved page for the next memory since it wasn't full
@@ -212,6 +212,38 @@ function renderLog(){
 	})
 }
 
+function renderPages(p){
+	var tRows = ``;
+	for (var i = 0; i < numberPages; i++) {
+		tRows +=`
+			<tr ${processList[p][i].p ? 'class="success"':null}>
+				<td>${i}</td>
+				<td>${processList[p][i].p ? 'Sim':'Não'} </td>
+				<td>${processList[p][i].frame}</td>
+			</tr>
+		`;
+	}
+	return tRows;
+}
+
+function renderProcessesList(){
+	document.getElementById("processesPageTable").innerHTML = "";
+	for (var i = 0; i < numberProcesses; i++) {
+		document.getElementById("processesPageTable").innerHTML += `
+		<h4>Process 0${i}</h4>
+		<table class="table table-hover">
+			<thead class="text-danger">
+				<th>ID da Página</th>
+				<th>Mapeada?</th>
+				<th>ID do Frame</th>
+			</thead>
+			<tbody>
+				${renderPages(i)}
+			</tbody>
+		</table>`;
+	}
+}
+
 function renderList(){
 	$("#instruction").html(`Executando tempo <strong>${numberInstructions - instructionList.length} de ${numberInstructions}</strong>`);
 
@@ -244,6 +276,7 @@ function renderList(){
 			</tr>
 		`;
 	}
+	renderProcessesList();
 }
 
 // Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
