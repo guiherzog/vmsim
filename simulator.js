@@ -35,6 +35,9 @@ var secondaryMemoryList = [];
 var instructionLog = "";
 var instructionInterval;
 
+// Stats
+var numberPageFaults = 0;
+
 var instructionList = [];
 // Random number of instructions between 20 and 5
 const numberInstructions = Math.floor(Math.random() * (21 - 5)) + 5;
@@ -151,8 +154,10 @@ function checkMemory(memoryType, page, pageToSave=null){
 	// If it isn't found, send a request for the next memory
 	else {
 		// PAGE FAULT: page isn't located in any memory, so it will be requested from disk.
-		if (memoryType == 0)
+		if (memoryType == 0){
 			instructionLog += "\nPage Fault! Página não se encontra na Memória Principal. Página será recuperada do disco.";
+			// numberPageFaults++;
+		}
 		instructionLog += `\nPágina não se encontra ${memoryName}.`;
 		if (memoryList.length == memorySize){
 			// PAGE SWAP: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
@@ -194,8 +199,8 @@ function initRender(){
 
 // Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
 function renderData(){
-	document.getElementById("instruction").innerHTML = `Executando tempo <strong>${numberInstructions - instructionList.length} de ${numberInstructions}</strong>`;
-
+	$("#instruction").html(`Executando tempo <strong>${numberInstructions - instructionList.length} de ${numberInstructions}</strong>`);
+	$('#pageFaults').html(`${numberPageFaults} <small>Page Faults.</small>`);
 	document.getElementById("primaryMemorySize").innerHTML = primaryMemoryList.length * pageSize + "/" + primaryMemorySize * pageSize + " <small>Bytes alocados.</small>";
 	document.getElementById("virtualMemorySize").innerHTML = virtualMemoryList.length * pageSize + "/" + virtualMemorySize * pageSize + " <small>Bytes alocados.</small>";
 	document.getElementById("swapMemorySize").innerHTML = swapMemoryList.length * pageSize + "/" + swapMemorySize * pageSize + " <small>Bytes alocados.</small>";
