@@ -3,6 +3,7 @@
 // All of the Node.js APIs are available in this process.
 const numberPages = 4;
 const numberProcesses = 3;
+const runIntervalTime = 3000;
 
 var processList = [];
 for (var i = 0; i < numberProcesses; i++) {
@@ -32,6 +33,7 @@ var swapMemoryList = [];
 var secondaryMemoryList = [];
 
 var instructionLog = "";
+var instructionInterval;
 
 var instructionList = [];
 // Random number of instructions between 20 and 5
@@ -80,13 +82,17 @@ function runInstruction(){
 	}
 }
 
+// Stop the process of running all instructions
+function stopRunning(){
+	clearInterval(instructionInterval);
+}
+
 // Runs all instructions at once using X ms intervals
 function runAllInstructions(){
-	let runInterval = 300; // 2 seg.
 	// Sets a timer to run a instruction every 'runInterval' seconds;
-	let instructionTimer = setInterval(runInstruction, runInterval);
+	instructionInterval = setInterval(runInstruction, runIntervalTime);
 	// Sets a timer to clear the interval after the last instruction is ran.
-	setTimeout(()=>{clearInterval(instructionTimer)}, runInterval*instructionList.length)
+	setTimeout(()=>{clearInterval(instructionInterval)}, runIntervalTime*instructionList.length);
 }
 // Searches for the requested page inside all memory tables
 // Recursive function that uses a top-down search process, while considering page swaps
@@ -183,6 +189,7 @@ function initRender(){
 		runInstruction();
 	});
 	document.getElementById("playAllButton").addEventListener("click", runAllInstructions);
+	document.getElementById("stopButton").addEventListener("click", stopRunning);
 }
 
 // Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
