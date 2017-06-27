@@ -3,7 +3,7 @@
 // All of the Node.js APIs are available in this process.
 const numberPages = 4;
 const numberProcesses = 3;
-const runIntervalTime = 3000;
+const runIntervalTime = 1000;
 
 var processList = [];
 for (var i = 0; i < numberProcesses; i++) {
@@ -22,9 +22,8 @@ for (var i = 0; i < numberProcesses; i++) {
 // Page size in bytes
 const pageSize = 4096;
 // Memory size in pages
-const primaryMemorySize = 4;
+const primaryMemorySize = 8;
 const virtualMemorySize = primaryMemorySize * 4;
-const swapMemorySize = primaryMemorySize * 16;
 const secondaryMemorySize = primaryMemorySize * 64;
 
 var primaryMemoryList = [];
@@ -35,13 +34,15 @@ var instructionInterval;
 
 // Stats
 var numberPageFaults = 0;
+var pageFaultRatePerTime = [numberInstructions];
 var clockIndex = 0;
 
 var instructionList = [];
 // Random number of instructions between 20 and 5
-const maxInstructions = 25;
-const minInstructions = 15
+const maxInstructions = 100;
+const minInstructions = 20
 var numberInstructions = Math.floor(Math.random() * (maxInstructions - minInstructions)) + minInstructions;
+var currentStep = 0;
 // Generating random instructions
 for (var i = 0; i < numberInstructions; i++) {
 	instructionList.push({
@@ -59,10 +60,10 @@ runInstruction();
 
 // Runs next page request from a page. After finding it, updates all memory lists and renders data
 function runInstruction(){
+	currentStep++;
 	if (instructionList.length > 0) {
 		instructionLog = "Iniciando próxima requisição...";
 		var pageLocation = checkMemory(0, instructionList[0]);
-		console.log(clockIndex)
 		// If the requested page isn't in primary memory, it's necessary to push it
 		if (pageLocation.memoryType != 0){
 			// If it's not in primary memory, it's a page fault.
@@ -86,6 +87,9 @@ function runInstruction(){
 					break;
 			}
 		}
+
+		// Update rate of page faults.
+		pageFaultRatePerTime[currentStep-1] = numberPageFaults/currentStep;
 		// If the requested page is in primary memory, everything's fine
 		// Removing instruction from list and rendering updated data
 		instructionList.splice(0, 1);
@@ -194,7 +198,6 @@ function clockSubstitution(memoryList){
 		// If it's finished looking on the memory, start again.
 		if (clockIndex >= memoryList.length)
 			clockIndex = 0;
-		console.log('algclock:'+clockIndex);
 	}
 
 }
@@ -229,6 +232,9 @@ function initRender(){
 		});
 		numberInstructions++;
 		renderList();
+	})
+	$("#newRequestField").focus(()=>{
+		renderNotification('top','center');
 	})
 }
 
@@ -290,29 +296,68 @@ function renderList(){
 		`;
 	}
 	document.getElementById("primaryMemoryList").innerHTML = "";
-	for (var i = 0; i < primaryMemoryList.length; i++) {
+	for (var i = 0; i < primaryMemorySize; i++) {
 		document.getElementById("primaryMemoryList").innerHTML += `
 			<tr ${i === clockIndex ? 'class="info"':null}>
 				<td>${i}</td>
-				<td>${primaryMemoryList[i].processId}</td>
-				<td>${primaryMemoryList[i].pageId}</td>
-				<td>${primaryMemoryList[i].referenced ? 'Sim': 'Não'}</td>
+				<td>${primaryMemoryList.length > i ? primaryMemoryList[i].processId : '--'}</td>
+				<td>${primaryMemoryList.length > i ? primaryMemoryList[i].pageId : '--'}</td>
+				<td>${primaryMemoryList.length > i ? primaryMemoryList[i].referenced ? 'Sim': 'Não' : '--'}</td>
 			</tr>
 		`;
 	}
 	document.getElementById("virtualMemoryList").innerHTML = "";
-	for (var i = 0; i < virtualMemoryList.length; i++) {
+	for (var i = 0; i < virtualMemorySize; i++) {
 		document.getElementById("virtualMemoryList").innerHTML += `
 			<tr>
 				<td>${i}</td>
-				<td>${virtualMemoryList[i].processId}</td>
-				<td>${virtualMemoryList[i].pageId}</td>
+				<td>${virtualMemoryList.length > i ? virtualMemoryList[i].processId : '--'}</td>
+				<td>${virtualMemoryList.length > i ? virtualMemoryList[i].pageId : '--'}</td>
 			</tr>
 		`;
 	}
 	renderProcessesList();
 }
 
+function renderPageFaultChart(){
+	var labelArray = [numberInstructions];
+	for (var i = 1; i <= numberInstructions; i++) {
+		labelArray[i-1] = i;
+	};
+
+	dataPageFaultChart = {
+			labels: labelArray,
+			series: [pageFaultRatePerTime]
+	};
+
+	optionsPageFaultChart = {
+			lineSmooth: Chartist.Interpolation.cardinal({
+					tension: 0
+			}),
+			scaleMinSpace: 1,
+			low: 0,
+			high: 1.05,
+			chartPadding: { top: 0, right: 5, bottom: 0, left: 0},
+	}
+
+	var pageFaultRateChart = new Chartist.Line('#pageFaultRateChart', dataPageFaultChart, optionsPageFaultChart);
+
+}
+
+function renderNotification(from, align){
+		$.notify({
+				icon: "note_add",
+				message: "Digite o processo, ponto e vírgula e a página. Ex: 0;1 para Página 1 do Processo 0"
+
+			},{
+					type: 'info',
+					timer: 4000,
+					placement: {
+							from: from,
+							align: align
+					}
+			});
+}
 // Render all simulation data that is modified between each iteration, such as allocated memory, page faults, etc.
 function renderData(){
 	$('#pageFaults').html(`${numberPageFaults} <small>Page Faults.</small>`);
@@ -334,6 +379,10 @@ function renderData(){
 
 	// Rendering instructions list and memory data;
 	renderList();
+
+	// Render charts;
+	renderPageFaultChart();
+
 	// Showing instruction logs
 	renderLog();
 }
