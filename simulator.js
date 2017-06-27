@@ -347,6 +347,10 @@ function renderPageFaultChart(){
 	};
 
 	optionsPageFaultChart = {
+			axisX: {
+			    showLabel: false,
+			    offset: 0
+			  },
 			lineSmooth: Chartist.Interpolation.cardinal({
 					tension: 0
 			}),
