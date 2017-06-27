@@ -157,7 +157,7 @@ function checkMemory(memoryType, page, pageToSave=null){
 			// numberPageFaults++;
 		}
 		else
-			instructionLog[instructionIndex].push(`Página não se encontra ${memoryName}.`);
+			instructionLog[instructionIndex].push(`Página não se encontra ${memoryName}.`);
 		if (memoryList.length == memorySize){
 			// PAGE SWAP: Send a page (chosen with a substitution algorithm) to the next memory so it can have space for the requested page
 			if (memoryType == 0){
@@ -245,10 +245,20 @@ function renderMemorySizeStats(){
 }
 
 function renderLog(){
-	$("#logContainer").fadeOut(300, ()=>{
-		$("#logText").html(instructionLog);
-		$("#logContainer").fadeIn(300,null);
-	})
+	var innerHTML = "";
+	for (var i = 0; i < instructionLog[instructionIndex].length; i++) {
+		innerHTML += `
+			<li>
+				<a href="#">${instructionLog[instructionIndex][i]}</a>
+			</li>
+		`;
+	}
+	$("#numberLogs").html(instructionLog[instructionIndex].length);
+	$("#instructionLog").html(innerHTML);
+	// $("#logContainer").fadeOut(300, ()=>{
+	// 	$("#logText").html(instructionLog);
+	// 	$("#logContainer").fadeIn(300,null);
+	// });
 }
 
 function renderPages(p){

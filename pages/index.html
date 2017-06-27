@@ -29,7 +29,8 @@
 						<!-- Top menu with steps buttons -->
 						<div class="collapse navbar-collapse">
 							<div class="navbar-header">
-								<ul class="nav navbar-nav navbar-right">
+								<ul class="nav navbar-nav navbar-left">
+									<a id="instruction" class="navbar-brand" href="#"></a>
 									<li>
 										<a id="playButton" href="#pablo" class="dropdown-toggle" data-toggle="dropdown">
 											<i class="material-icons">play_arrow</i>
@@ -50,13 +51,13 @@
 									</li>
 									<li class="dropdown">
 										<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-											<i class="material-icons">memory</i>
-											<span class="notification" id="numberProcesses"></span>
+											<i class="material-icons">notifications</i>
+											<span class="notification" id="numberLogs"></span>
 											<p class="hidden-lg hidden-md">Processos rodando</p>
 										</a>
+										<ul class="dropdown-menu" id="instructionLog"></ul>
 									</li>
 								</ul>
-								<a id="instruction" class="navbar-brand" href="#"></a>
 							</div>
 
 							<form id="newRequestForm" class="navbar-form navbar-right" role="search">
@@ -155,11 +156,6 @@
 									<tbody id="instructionList"></tbody>
 								</table>
 							</div>
-						</div>
-						<div id="logContainer" class="alert alert-success alert-with-icon" data-notify="container">
-							<button type="button" aria-hidden="true" class="close">×</button>
-							<i data-notify="icon" class="material-icons">check</i>
-							<span id="logText" data-notify="message"></span>
 						</div>
 					</div>
 					<div class="col-lg-3 col-md-6 col-sm-6">
