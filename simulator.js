@@ -123,10 +123,10 @@ function checkMemory(memoryType, page, pageToSave=null){
 		case 2: // Secondary
 		// Stopping condition: Page is always stored inside the disk
 		// No indexes are considered for it
-		instructionLog[instructionIndex].push(`Procurando por Página ${page.pageId} do Processo ${page.processId} no disco...`);
+		instructionLog[instructionIndex].push(`Procurando por Página ${page.pageId} do Processo ${page.processId} no Disco...`);
 		instructionLog[instructionIndex].push("Página Encontrada!");
 		if (pageToSave != null)
-		instructionLog[instructionIndex].push(`Salvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal no disco.`);
+		instructionLog[instructionIndex].push(`Salvando Página ${pageToSave.pageId} do Processo ${pageToSave.processId} enviada da Memória Principal no Disco.`);
 		return {
 			memoryType: 2,
 			index: 0
@@ -157,7 +157,7 @@ function checkMemory(memoryType, page, pageToSave=null){
 	else {
 		// PAGE FAULT: page isn't located in any memory, so it will be requested from disk.
 		if (memoryType == 0){
-			instructionLog[instructionIndex].push("Page Fault! Página não se encontra na Memória Primária. Página será recuperada do disco.");
+			instructionLog[instructionIndex].push("Page Fault! Página não se encontra na Memória Primária.");
 			// numberPageFaults++;
 		}
 		else
