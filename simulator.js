@@ -349,16 +349,16 @@ function renderPageFaultChart(){
 	optionsPageFaultChart = {
 		axisX: {
 			labelInterpolationFnc: function skipLabels(value, index) {
-			  return index % 2  === 0 ? value : null;
+				return index % 2  === 0 ? value : null;
 			}
-		  },
+		},
 		lineSmooth: Chartist.Interpolation.cardinal({
 			tension: 0
 		}),
-		scaleMinSpace: 1,
+		height: 160,
 		low: 0,
-		high: 1.05,
-		chartPadding: { top: 0, right: 5, bottom: 0, left: 0},
+		high: 1,
+		chartPadding: { top: 30, right: 5, bottom: 0, left: 0},
 	}
 
 	var pageFaultRateChart = new Chartist.Line('#pageFaultRateChart', dataPageFaultChart, optionsPageFaultChart);
