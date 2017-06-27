@@ -296,7 +296,7 @@ function renderList(){
 				<td>${i}</td>
 				<td>${primaryMemoryList[i].processId}</td>
 				<td>${primaryMemoryList[i].pageId}</td>
-				<td>${primaryMemoryList[i].referenced}</td>
+				<td>${primaryMemoryList[i].referenced ? 'Sim': 'Não'}</td>
 			</tr>
 		`;
 	}
