@@ -15,7 +15,7 @@ npm install
 npm start
 ```
 
-Note: The language of this project is in Portuguese. If you want it in English, feel free to open an issue or translate yourself.
+> Note: The language of this project is in Portuguese. If you want it in English, feel free to open an issue or ask for help on translating it.
 
 Check our Slideshow to get a better understanding of it: [Open on Google Slides]( https://docs.google.com/presentation/d/1RkHYf1MC1XA6na4kNTl1VE2YlssxpOwJ6jb7c9DQ7oo/pub?start=false&loop=false&delayms=3000)
 
