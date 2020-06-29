@@ -1,6 +1,6 @@
 # Virtual Memory Simulator using Paging and Clock Substitution
 
-**This is project developed for the Operating Systems subject at the Federal University of Rio de Janeiro done in the first semester of 2017.**
+**This project has been developed for the Operating Systems subject at the Federal University of Rio de Janeiro done in the first semester of 2017.**
 
 It is developed as a standalone application using **Electron**. Its main purpose is to illustrate the working of a virtual memory and explore a few common known algorithms for the handling of page faults.
 
