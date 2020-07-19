@@ -25,7 +25,7 @@ Check our Slideshow to get a better understanding of it: [Open on Google Slides]
 
 #### This project was developed using Electron, Node.js, jQuery, Bootstrap & Others. Feel free to read their docs if you need any help.
 
-## Electron Documentations
+## Electron Documentation
 - [electron.atom.io/docs](http://electron.atom.io/docs) - all of Electron's documentation
 
 ## License
